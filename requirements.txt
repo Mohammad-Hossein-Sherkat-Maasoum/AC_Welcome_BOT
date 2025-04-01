@@ -1,2 +1,7 @@
-discord.py
+discord
+aiohttp
+arabic-reshaper
+python-bidi
+pillow
 flask
+gunicorn
