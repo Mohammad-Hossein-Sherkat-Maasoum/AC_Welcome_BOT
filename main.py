@@ -22,7 +22,7 @@ EXTRA_IMAGE_PATH = "extra_image.png"
 FONT_PATH = os.path.join(os.getcwd(), "Vazir-Bold.ttf")
 
 if not os.path.exists(FONT_PATH):
-    print("⚠️ فایل فونت پیدا نشد! لطفاً فونت را در مسیر پروژه قرار دهید.")
+    print("⚠️ فایل فونت پیدا نشد!")
 
 # تنظیم Intents
 intents = discord.Intents.default()
@@ -35,7 +35,7 @@ discord_client = discord.Client(intents=intents)
 async def get_user_avatar(user):
     """دریافت آواتار کاربر یا استفاده از آواتار پیش‌فرض."""
     try:
-        if user.avatar and user.avatar.url:
+        if user.avatar:
             async with aiohttp.ClientSession() as session:
                 async with session.get(str(user.avatar.url)) as resp:
                     if resp.status == 200:
@@ -50,6 +50,7 @@ async def create_welcome_image(user):
     try:
         user_avatar = await get_user_avatar(user)
         default_avatar = Image.open(DEFAULT_AVATAR_PATH).convert("RGBA").resize((155, 155))
+
         base_image = Image.open(WELCOME_IMAGE_PATH).convert("RGBA").resize((600, 400))
         canvas = Image.new("RGBA", base_image.size, (0, 0, 0, 0))
         canvas.paste(base_image, (0, 0))
@@ -58,23 +59,29 @@ async def create_welcome_image(user):
             user_avatar = user_avatar.resize((115, 115))
             canvas.paste(user_avatar, (60, 50), user_avatar)
         canvas.paste(default_avatar, (base_image.width - default_avatar.width - 40, 30), default_avatar)
-        
+
         draw = ImageDraw.Draw(canvas)
-        font = ImageFont.truetype(FONT_PATH, 35) if os.path.exists(FONT_PATH) else ImageFont.load_default()
-        
-        text_lines = [
-            get_display(reshape(f"سلام {user.name} خوش اومدی!")),
-            get_display(reshape("از الآن عضو کُلایدر آرمی هستی!"))
-        ]
-        text_y = (base_image.height - 100) // 2
-        
-        for i, line in enumerate(text_lines):
-            text_width, text_height = draw.textsize(line, font=font)
-            draw.text(((base_image.width - text_width) // 2, text_y + (i * 40)), line, font=font, fill="white")
-        
+        font = ImageFont.truetype(FONT_PATH, 35)
+
+        # متن خوش‌آمدگویی
+        text = f"سلام {user.name} خوش اومدی!\nاز الآن عضو کُلایدر آرمی هستی!"
+        reshaped_text = get_display(reshape(text))
+
+        # تقسیم متن به خطوط
+        lines = reshaped_text.split('\n')
+        total_text_height = sum([draw.textbbox((0, 0, 0, 0), line, font=font)[3] for line in lines]) + (len(lines) - 1) * 10
+
+        # رسم متن
+        current_y = (base_image.height - total_text_height) // 2 + 20
+        for line in lines:
+            text_width = draw.textbbox((0, 0, 0, 0), line, font=font)[2]
+            text_x = (base_image.width - text_width) // 2
+            draw.text((text_x, current_y), line, font=font, fill="white")
+            current_y += 45
+
         if os.path.exists(EXTRA_IMAGE_PATH):
             extra_image = Image.open(EXTRA_IMAGE_PATH).convert("RGBA").resize((100, 100))
-            canvas.paste(extra_image, ((base_image.width - 100) // 2, text_y + 50), extra_image)
+            canvas.paste(extra_image, ((base_image.width - 100) // 2, current_y - 15), extra_image)
         
         output_path = f"welcome_{user.id}.png"
         canvas.save(output_path, "PNG")
