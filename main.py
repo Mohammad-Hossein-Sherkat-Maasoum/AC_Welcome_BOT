@@ -7,8 +7,6 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 import os
 from keep_alive import keep_alive  # اجرای سرور Flask برای Railway
 
-print(f"🔍 مسیر فونت: {FONT_PATH}, وجود دارد؟ {os.path.exists(FONT_PATH)}")
-
 # اجرای سرور Flask
 keep_alive()
 
