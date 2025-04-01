@@ -19,7 +19,7 @@ WELCOME_CHANNEL_ID = 1072197211766657024  # Welcome channel ID
 WELCOME_IMAGE_PATH = "welcome_image.jpg"
 DEFAULT_AVATAR_PATH = "default_avatar.jpg"
 EXTRA_IMAGE_PATH = "extra_image.png"
-FONT_PATH = os.path.join(os.getcwd(), "Vazir_Bold.ttf")
+FONT_PATH = os.path.join(os.getcwd(), "Vazir-Bold.ttf")
 
 if not os.path.exists(FONT_PATH):
     print("⚠️ فایل فونت پیدا نشد!")
