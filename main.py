@@ -50,6 +50,7 @@ async def create_welcome_image(user):
     try:
         user_avatar = await get_user_avatar(user)
         default_avatar = Image.open(DEFAULT_AVATAR_PATH).convert("RGBA").resize((155, 155))
+        default_avatar = ImageOps.mirror(default_avatar)  # آینه کردن آواتار دیفالت
 
         base_image = Image.open(WELCOME_IMAGE_PATH).convert("RGBA").resize((600, 400))
         canvas = Image.new("RGBA", base_image.size, (0, 0, 0, 0))
