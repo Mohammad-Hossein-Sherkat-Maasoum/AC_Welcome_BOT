@@ -82,7 +82,7 @@ async def create_welcome_image(user):
 
         if os.path.exists(EXTRA_IMAGE_PATH):
             extra_image = Image.open(EXTRA_IMAGE_PATH).convert("RGBA").resize((100, 100))
-            canvas.paste(extra_image, ((base_image.width - 100) // 2, current_y - 15), extra_image)
+            canvas.paste(extra_image, ((base_image.width - 100) // 2, current_y - 10), extra_image)
         
         output_path = f"welcome_{user.id}.png"
         canvas.save(output_path, "PNG")
